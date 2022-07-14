@@ -1,0 +1,8 @@
+{
+  "TYPE": "type",
+  "NAME": "name",
+  "PASS": "password",
+  "ID":  "id",
+  "TAGS":  "tags",
+  "AUTHOR": "author"
+}
