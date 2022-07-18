@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	"net"
 )
 
@@ -54,10 +55,23 @@ func handleClient(conn net.Conn) {
 func checkClientPacket(conn net.Conn, packet map[string]interface{}) {
 	keys := getClientKeys()
 	tp := int(packet[keys.TYPE].(float64))
-	if tp == 1 {
-		answer := RegisterStruct{1, "Success", 1, true}
-		b, _ := json.Marshal(answer)
-		fmt.Println(string(b))
-		conn.Write(b) // пишем в сокет
+	if tp == REG {
+		tryRegister(conn, packet)
 	}
+}
+
+func tryRegister(conn net.Conn, packet map[string]interface{}) {
+	keys := getClientKeys()
+	isExist := isExistUser(packet[keys.NAME].(string))
+	var answer RegisterStruct
+	if isExist {
+		answer = RegisterStruct{SERVER_ERR_REG_AUTH, "Имя уже занято", -1, false}
+	} else if lastId, err := addNewUser(packet[keys.NAME].(string), packet[keys.PASS].(string)); err {
+		answer = RegisterStruct{SERVER_ERR_REG_AUTH, "Ошибка со стороны бд", -1, false}
+	} else {
+		answer = RegisterStruct{SERVER_SUCCESS_REG, "Успешно", lastId, false}
+	}
+	b, _ := json.Marshal(answer)
+	fmt.Println(string(b))
+	conn.Write(b) // пишем в сокет
 }

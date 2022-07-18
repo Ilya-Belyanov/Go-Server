@@ -7,6 +7,19 @@ import (
 	"os"
 )
 
+const (
+	REQ_DISC     = -1
+	PROOF_DISC   = 0
+	REG          = 1
+	AUTH         = 2
+	ALL_SONGS    = 3
+	ADD_SONG     = 4
+	ALL_TAGS     = 5
+	MY_SONGS     = 6
+	BUYING_SONGS = 7
+	BUY_SONG     = 8
+)
+
 type ClientKeys struct {
 	TYPE   string
 	NAME   string
